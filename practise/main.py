@@ -72,8 +72,8 @@ import parser, solver, scorer, writer
 #     writer.write(solution, filename.replace('datasets','solutions'))
 # 
 
-dataset = parser.parse('datasets/b_little_bit_of_everything.in')
+dataset = parser.parse('datasets/a_example')
 solution = solver.solve(dataset)
 print(solution)
 score = scorer.score(solution, dataset)
-print("Score =",score)print("Score =",score)score = scorer.score(solution, dataset)
+print("Score =",score)
