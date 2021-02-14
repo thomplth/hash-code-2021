@@ -35,9 +35,14 @@ def solution(pizzaData):
 
     # Assign the remaining pizza to the two-people teams according to which 
 
-        
-        
-        
+
+def countDistinctIngredients(pizzas):
+     ingredients = set()
+     for pizza in pizzas:
+         for ingredient in pizza[1:]:
+             ingredients.add(ingredient)
+     return len(ingredients)
+
         
 """
 def sort_ingredient_list(pizzaData):
@@ -52,8 +57,6 @@ def sort_ingredient_list(pizzaData):
 """            
 
 
-
-
 def define_team(pizzaData):
     # First, maximize number two person team
     twoPersonTeam = pizzaData.nOfTwo
@@ -63,7 +66,7 @@ def define_team(pizzaData):
 
 def hash_apporach_for_two(dataset):
     arr = [[0 for i in range(dataset['nOfPizzas'])] for j in range(dataset['nOfPizzas'])]
-    for i in range(dataset['nOfPizzas']:
+    for i in range(dataset['nOfPizzas']):
         i_total_ingra=1
         i_ingra=set()
         while i_total_ingra<(len(dataset['pizzas'][i])):
