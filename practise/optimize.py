@@ -1,9 +1,29 @@
 # Let numOfPizza = n, numOfIngredient = d
 import sys
 
-ingredientCount = pizzaData.ingredient.copy()
+def solution(pizzaData):
+    twoSolution = []
+    threeSolution = []
+    fourSolution = []
 
-def pickSmallestIngredient(pizzaData):
+    teamSize = define_team(pizzaData)
+
+    nowMaxIndex = len(pizzaData.ingredients)-1
+    nowMinIndex = 0
+
+    for pizza in pizzaData.pizzas:
+        if pizzaData.ingredients[0] in pizza and pizzaData.ingredients[nowMax] in pizza:
+            if len(twoSolution) < teamSize[0]:
+                twoSolution.append(pizza)
+                for ingredient in pizza:
+                    pizzaData.ingredients -= 1
+
+        
+        
+        
+        
+"""
+def sort_ingredient_list(pizzaData):
     minIngredientList = []
     minIngredientCount = sys.maxint
     for ingredient, count in pizzaData.ingredients.items():
@@ -12,6 +32,7 @@ def pickSmallestIngredient(pizzaData):
         elif count == minIngredientCount:
             minIngredientList.append(ingredient)
     return [minIngredientList, minIngredientCount]
+"""            
 
 
 def countDistinctIngredients(pizzas):
@@ -22,7 +43,7 @@ def countDistinctIngredients(pizzas):
     return len(ingredients)
 
 
-def defineTeam(pizzaData):
+def define_team(pizzaData):
     # First, maximize number two person team
     twoPersonTeam = pizzaData.nOfTwo
     fourPersonTeam = 3 - ((pizzaData.nOfPizzas - 2 * pizzaData.nOfTwo) % 3)
