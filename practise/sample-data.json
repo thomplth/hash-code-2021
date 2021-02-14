@@ -1,0 +1,34 @@
+{'pizzas': [
+        ['3', 'onion', 'pepper', 'olive'
+        ],
+        ['3', 'mushroom', 'tomato', 'basil'
+        ],
+        ['3', 'chicken', 'mushroom', 'pepper'
+        ],
+        ['3', 'tomato', 'mushroom', 'basil'
+        ],
+        ['2', 'chicken', 'basil'
+        ]
+    ], 'nOfPizzas': 5, 'nOfTwo': 1, 'nOfThree': 2, 'nOfFour': 1
+}
+
+{'pizzas': [
+        [
+            0, 'onion', 'pepper', 'olive'
+        ],
+        [
+            1, 'mushroom', 'tomato', 'basil'
+        ],
+        [
+            2, 'chicken', 'mushroom', 'pepper'
+        ],
+        [
+            3, 'tomato', 'mushroom', 'basil'
+        ],
+        [
+            4, 'chicken', 'basil'
+        ]
+    ], 'nOfPizzas': 5, 'nOfTwo': 1, 'nOfThree': 2, 'nOfFour': 1, 'ingredients': {'onion': 1, 'pepper': 2, 'olive': 1, 'mushroom': 3, 'tomato': 2, 'basil': 3, 'chicken': 2
+    }
+}
+
