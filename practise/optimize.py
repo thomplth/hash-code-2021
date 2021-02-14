@@ -11,12 +11,29 @@ def solution(pizzaData):
     nowMaxIndex = len(pizzaData.ingredients)-1
     nowMinIndex = 0
 
-    for pizza in pizzaData.pizzas:
-        if pizzaData.ingredients[0] in pizza and pizzaData.ingredients[nowMax] in pizza:
+    # Distribute one pizza to each two-person team
+    while nowMinIndex != nowMaxIndex:
+        pizzaPicked = False
+        for idx, pizza in enumerate(pizzaData.pizzas):
             if len(twoSolution) < teamSize[0]:
-                twoSolution.append(pizza)
-                for ingredient in pizza:
-                    pizzaData.ingredients -= 1
+                if pizzaData.ingredients[nowMinIndex] in pizza and pizzaData.ingredients[nowMaxIndex] in pizza:
+                    pizzaPicked = True
+                    twoSolution.append([pizza])
+                    for pickedIngredient in pizza:
+                        pizzaData.ingredients[pickedIngredient] -= 1
+                        if pizzaData.ingredients[pickedIngredient] == 0:
+                            if pizzaData.ingredients.keys().index(pickedIngredient) == 0:
+                                nowMinIndex += 1
+                            pizzaData.ingredients.pop(pickedIngredient, None)
+                    pizzaData.pizzas.pop(idx)
+                    break
+        if not pizzaPicked:
+            nowMaxIndex -= 1
+            
+    # Distribute the another pizza to two-person team
+    # Sort the entire current two person team by pizza length
+
+    # Assign the remaining pizza to the two-people teams according to which 
 
         
         
@@ -35,12 +52,6 @@ def sort_ingredient_list(pizzaData):
 """            
 
 
-def countDistinctIngredients(pizzas):
-    ingredients = set()
-    for pizza in pizzas:
-        for ingredient in pizza[1:]:
-            ingredients.add(ingredient)
-    return len(ingredients)
 
 
 def define_team(pizzaData):
@@ -52,7 +63,7 @@ def define_team(pizzaData):
 
 def hash_apporach_for_two(dataset):
     arr = [[0 for i in range(dataset['nOfPizzas'])] for j in range(dataset['nOfPizzas'])]
-    for i in range(dataset['nOfPizzas']):
+    for i in range(dataset['nOfPizzas']:
         i_total_ingra=1
         i_ingra=set()
         while i_total_ingra<(len(dataset['pizzas'][i])):
