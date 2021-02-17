@@ -2,16 +2,22 @@
 dataset_format = {
     'pizzas':
             [
-                [3, 'onion', 'pepper', 'olive'], 
-                [3, 'mushroom', 'tomato', 'basil']
-            ],               # Number of ingredients in each pizza, followed by ingredients
+                [1, 'onion', 'pepper', 'olive'], 
+                [2, 'mushroom', 'tomato', 'basil']
+            ],               # Index of each pizza, followed by ingredients, ordered decendingly by number of ingredients
     'nOfPizzas': 5,          # Number of pizzas
     'nOfTwo': 1,             # Number of 2-person teams
     'nOfThree': 2,           # Number of 3-person teams
     'nOfFour': 1,            # Number of 4-person teams
+    'ingredients':
+            {
+                'onion': 1,
+                'pepper': 2,
+            }                # occurance of ingredients in all pizzas, accending order by occurance
 }
 
-solution_format = [0, 2, 3]          # for indx team, which pizza to choose
+# for indx team, which pizza to chosolution_format = [0, 2, 3]          # Index of each selected pizza, followed by which pizza should choose
+ 0, 2, 3{}[]0, 2, 3,[]1,4  \2D list, 
 """
 
 def score(solution, dataset):
