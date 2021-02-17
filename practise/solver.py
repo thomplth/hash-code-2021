@@ -1,4 +1,4 @@
-
+import optimize
 
 def solve_helper(dataset, tab, people, visited):
 	ans=[]
@@ -38,13 +38,66 @@ def solve(dataset):
 
 	return solution
 
+
 """
 :returns: [[<pizza-index>, ...], [..], ...]
 
 """
-def solveGreedy(dataset):
-	no_of_teams = optimize.defineTeam(dataset)
-	sol = [[] * dataset['nOfPizzas']]
-	for team in sol:
-		team.append(dataset['pizzas'].pop(0))
-	for team in sol[:no_of_teams[0]]:
+def solveTemp(dataset):
+	count = 0
+	no_of_teams = dataset['nOfTwo']+dataset['nOfThree']+dataset['nOfFour']
+	no_of_people = 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']
+	pizzas = dataset['pizzas'].copy()
+	sol = []
+	for i in range(dataset['nOfTwo']):
+		team = []
+		try:
+			team.append(pizzas.pop(0)[0])
+			team.append(pizzas.pop(0)[0])
+		except IndexError:
+			return sol
+		count += 1
+		print(f'{count} processed out of {no_of_people}.', end='\r')
+		sol.append(team)
+	for i in range(dataset['nOfThree']):
+		team = []
+		try:
+			team.append(pizzas.pop(0)[0])
+			team.append(pizzas.pop(0)[0])
+			team.append(pizzas.pop(0)[0])
+		except IndexError:
+			return sol
+		count += 1
+		print(f'{count} processed out of {no_of_people}.', end='\r')
+		sol.append(team)
+	for i in range(dataset['nOfFour']):
+		team = []
+		try:
+			team.append(pizzas.pop(0)[0])
+			team.append(pizzas.pop(0)[0])
+			team.append(pizzas.pop(0)[0])
+			team.append(pizzas.pop(0)[0])
+		except IndexError:
+			return sol
+		count += 1
+		print(f'{count} processed out of {no_of_people}.', end='\r')
+		sol.append(team)
+
+	return sol
+
+
+def solvemc(dataset):
+    capa = dataset['knapsize']
+    sol = []
+    for i in range(len(dataset['pizzas'])-1, -1, -1):
+        if random.getrandbits(2) and capa >= dataset['pizzas'][i]:
+            sol.append(i)
+            capa -= dataset['pizzas'][i]
+    st = set(sol)
+    for i in range(len(dataset['pizzas'])-1, -1, -1):
+        if i not in st and capa >= dataset['pizzas'][i]:
+            sol.append(i)
+            capa -= dataset['pizzas'][i]
+    return sol
+
+    
