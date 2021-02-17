@@ -33,6 +33,6 @@ def parse(filename):
 
         return dataset
 
-print(parse('datasets/a_example'))
+# print(parse('datasets/a_example'))
 # print(parse('datasets/b_little_bit_of_everything.in'))
 # print(parse('datasets/e_many_teams.in'))
