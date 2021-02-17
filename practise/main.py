@@ -60,20 +60,21 @@ Until it finds a pizza with 1x lowest topping and all other toppings are highest
 """var = len(list)"""
 
 
-import glob
-
+import glob, time
 import parser, solver, scorer, writer
 
-# for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
-#     dataset = parser.parse(filename)
-#     solution = solver.solve(dataset)
-#     score = scorer.score(solution, dataset)
-#     # print('Score for %s: %s/%s (%s to perfect score)' % (filename, score, dataset['knapsize'], dataset['knapsize'] - score))
-#     writer.write(solution, filename.replace('datasets','solutions'))
-# 
+for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
+    dataset = parser.parse(filename)
+    start_time = time.time()
+    solution = solver.solveTemp(dataset)
+    print("--- %.10f seconds ---" % (time.time() - start_time))
+    score = scorer.score(solution, dataset)
+    print('Score for %s: %s (%s pizzas for %s person)' % (filename[9:], score, dataset['nOfPizzas'], 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']))
+    writer.write(solution, filename[9]+'.txt')
 
-dataset = parser.parse('datasets/a_example')
-solution = solver.solve(dataset)
-print(solution)
-score = scorer.score(solution, dataset)
-print("Score =",score)
+
+# dataset = parser.parse('datasets/a_example')
+# solution = solver.solve(dataset)
+# print(solution)
+# score = scorer.score(solution, dataset)
+# print("Score =",score)
