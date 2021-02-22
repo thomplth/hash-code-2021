@@ -1,151 +1,47 @@
-import optimize
+"""Easiest solution: just put the lowest scanning time first
 
-def solve_helper(dataset, tab, people, visited):
-	ans=[]
-	max_index=[]
-	max_ingred=0
-	num_of_p=dataset['nOfPizzas']
-	for i in range(dataset[tab]):
-		if dataset['nOfPizzas']< people:
-			break
-		temp_list=[]
-		for j in range(people):
-			max_index=0
-			max_ingred=0
-			count=0
-			for k in dataset['pizzas']:
-				if len(k)-1>max_ingred and visited[k[0]]==False:
-					max_ingred=len(k)-1
-					max_index=k[0]
-				count+=1
-			temp_list.append(max_index)
-			visited[max_index]=True
-			#dataset['pizzas'][max_index][0]=-1
-			num_of_p-=1
-		ans.append(temp_list)
-	return ans
+:returns:[{<index> : [<scanned book 1>, <scanned book 2>]}, {<index_2> : [<scanned book 1>, <scanned book 2>,...]}]
 
-
+"""
 def solve(dataset):
-	slices = 0
-	solution = []
-	max_index=[]
-	max_ingred=0
-	visited=[False]*dataset['nOfPizzas']
-	solution.extend(solve_helper(dataset,'nOfTwo',2,visited))
-	solution.extend(solve_helper(dataset,'nOfThree',3,visited))
-	solution.extend(solve_helper(dataset,'nOfFour',4,visited))
-
+	signing_lib = 0
+	remain_signing_day = dataset['lib'][signing_lib]['signup']
+	signed = []
+	# # solution = [[None]]*dataset['nday']
+	solution = [[] for x in range(dataset['nlib'])]
+	for i in range(dataset['nday']):
+		if signed:
+			for j in signed:
+				for k in range(dataset['lib'][j]['ship']):
+					curr_index=(i-dataset['lib'][j]['signup'])*dataset['lib'][j]['ship']+k
+					if(curr_index<len(dataset['lib'][j]['books'])):
+						if dataset['shelf'][dataset['lib'][j]['books'][curr_index]]['scan']!= True:
+							solution[j].append(dataset['lib'][j]['books'][curr_index]) #here
+							dataset['shelf'][dataset['lib'][j]['books'][curr_index]]['scan']= True
+		remain_signing_day -= 1
+		if(remain_signing_day == 0):
+			signed.append(signing_lib)
+			if signing_lib != (dataset['nlib']-1):
+				signing_lib += 1
+				remain_signing_day = dataset['lib'][signing_lib]['signup']
 	return solution
 
 
+"""Greedy solution
 """
-:returns: [[<pizza-index>, ...], [..], ...]
-
-"""
-def solveTemp(dataset):
-	count = 0
-	no_of_teams = dataset['nOfTwo']+dataset['nOfThree']+dataset['nOfFour']
-	no_of_people = 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']
-	pizzas = dataset['pizzas'].copy()
-	sol = []
-	for i in range(dataset['nOfTwo']):
-		team = []
-		try:
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-		except IndexError:
-			return sol
-		count += 1
-		print(f'{count} processed out of {no_of_people}.', end='\r')
-		sol.append(team)
-	for i in range(dataset['nOfThree']):
-		team = []
-		try:
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-		except IndexError:
-			return sol
-		count += 1
-		print(f'{count} processed out of {no_of_people}.', end='\r')
-		sol.append(team)
-	for i in range(dataset['nOfFour']):
-		team = []
-		try:
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-		except IndexError:
-			return sol
-		count += 1
-		print(f'{count} processed out of {no_of_people}.', end='\r')
-		sol.append(team)
-
-	return sol
-
-
 def solveGreedy(dataset):
-	count = 0
-	no_of_teams = dataset['nOfTwo']+dataset['nOfThree']+dataset['nOfFour']
-	no_of_people = 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']
-	pizzas = dataset['pizzas'].copy()
 	sol = []
-	for i in range(dataset['nOfTwo']):
-		team = []
-		try:
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-		except IndexError:
-			return sol
-		count += 1
-		print(f'{count} processed out of {no_of_people}.', end='\r')
-		sol.append(team)
-	for i in range(dataset['nOfThree']):
-		team = []
-		try:
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-		except IndexError:
-			return sol
-		count += 1
-		print(f'{count} processed out of {no_of_people}.', end='\r')
-		sol.append(team)
-	for i in range(dataset['nOfFour']):
-		team = []
-		try:
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-			team.append(pizzas.pop(0)[0])
-		except IndexError:
-			return sol
-		count += 1
-		print(f'{count} processed out of {no_of_people}.', end='\r')
-		sol.append(team)
 
-	return sol
-
-# O(n ** m)
-def findBestSet(dataset, m):
-	for i in range(len(dataset['pizzas'])):
-		pass
+	# for i in range(dataset['nday']):
+	item = {
+		'index': dataset['lib'][0]['index'],
+		'scanned': dataset['lib'][0]['books']
+	}
+	sol.append(item)
+	return sol[item]
 
 
-def solvemc(dataset):
-    capa = dataset['knapsize']
-    sol = []
-    for i in range(len(dataset['pizzas'])-1, -1, -1):
-        if random.getrandbits(2) and capa >= dataset['pizzas'][i]:
-            sol.append(i)
-            capa -= dataset['pizzas'][i]
-    st = set(sol)
-    for i in range(len(dataset['pizzas'])-1, -1, -1):
-        if i not in st and capa >= dataset['pizzas'][i]:
-            sol.append(i)
-            capa -= dataset['pizzas'][i]
-    return sol
-
-    
+"""Randomised Greedy solution
+"""
+def solveRandom(dataset):
+	pass

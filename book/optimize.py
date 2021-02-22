@@ -1,93 +1,84 @@
-# Let numOfPizza = n, numOfIngredient = d
-import sys
-
-
-def solution(pizzaData):
-    twoSolution = []
-    threeSolution = []
-    fourSolution = []
-
-    teamSize = define_team(pizzaData)
-
-    nowMaxIndex = len(pizzaData.ingredients)-1
-    nowMinIndex = 0
-
-    # Distribute one pizza to each two-person team
-    while nowMinIndex != nowMaxIndex:
-        pizzaPicked = False
-        for idx, pizza in enumerate(pizzaData.pizzas):
-            if len(twoSolution) < teamSize[0]:
-                if pizzaData.ingredients[nowMinIndex] in pizza and pizzaData.ingredients[nowMaxIndex] in pizza:
-                    pizzaPicked = True
-                    twoSolution.append([pizza])
-                    for pickedIngredient in pizza:
-                        pizzaData.ingredients[pickedIngredient] -= 1
-                        if pizzaData.ingredients[pickedIngredient] == 0:
-                            if pizzaData.ingredients.keys().index(pickedIngredient) == 0:
-                                nowMinIndex += 1
-                            pizzaData.ingredients.pop(pickedIngredient, None)
-                    pizzaData.pizzas.pop(idx)
-                    break
-        if not pizzaPicked:
-            nowMaxIndex -= 1
-
-    # Distribute the another pizza to two-person team
-    # Sort the entire current two person team by pizza length
-
-    # Assign the remaining pizza to the two-people teams according to which
-
-
-def countDistinctIngredients(pizzas):
-    ingredients = set()
-    for pizza in pizzas:
-        for ingredient in pizza[1:]:
-            ingredients.add(ingredient)
-    return len(ingredients)
-
 
 """
-def sort_ingredient_list(pizzaData):
-    minIngredientList = []
-    minIngredientCount = sys.maxint
-    for ingredient, count in pizzaData.ingredients.items():
-        if count < minIngredientCount:
-            minIngredientList = [ingredient]
-        elif count == minIngredientCount:
-            minIngredientList.append(ingredient)
-    return [minIngredientList, minIngredientCount]
+Things to consider:
+1. Time needed to scan all books in one library
+2. Sign up time of the library
+3. Scanning rate of the library
+4. Distinct score of the entire library
+
+5. scan in random order???
+
+Steps:
+1. Sort by lowest signup time + number of days required to scan all books
+2. For each signed up library, first check the global shelf, then pop the book already scanned
+3. scan the books in random order, update the global shelf
 """
 
+def solve(data, shelf):
+    current_day = 0
+	signing_lib = {}
+    next_sign_time = 0
+	signed_lib = []
+	solution = []
 
-def define_team(pizzaData):
-    # First, maximize number two person team
-    twoPersonTeam = pizzaData['nOfTwo']
-    fourPersonTeam = 3 - ((pizzaData['nOfPizzas'] - 2 * pizzaData['nOfTwo']) % 3)
-    threePersonTeam = pizzaData['nOfPizzas'] - twoPersonTeam - fourPersonTeam
-    # print(pizzaData['nOfTwo'], pizzaData['nOfThree'], pizzaData['nOfFour'])
-    # print([twoPersonTeam, threePersonTeam, fourPersonTeam])
-    return [twoPersonTeam, threePersonTeam, fourPersonTeam]
+	lib_lowest_signup_time = data.lib.sort(lowest_signup_time_sort).sort(scanning_days_needed_sort)
+
+    while current_day != data.nday:
+        if current_day == next_sign_time:
+            signed_lib.append(signing_lib)
+            signing_lib = lib_lowest_signup_time.pop(0)
+            next_sign_time += signing_lib.signup
+        
+        for lib in signed_lib:
+            lib.books = filter(lambda x: return shelf.scan[x],lib.books)
+            if not any(lib.index == x.index for x in solution):
+                solution.append(lib)
+            
+            # Scan books by their order in the list
+            for sol in solution:
+                if sol.index == lib.index
+                    sol.extend(lib.books[0:lib.ship]))
+                    lib.books = lib.books[lib.ship:]
+                
+        current_day += 1
+    
+    return solution
+
+def solve_sort_signup_and_sort_book_score(dataset):
+	sorted_lib=data.lib.sort(scanning_days_needed_sort)
 
 
-def hash_apporach_for_two(dataset):
-    arr = [[0 for i in range(dataset['nOfPizzas'])]
-           for j in range(dataset['nOfPizzas'])]
-    for i in range(dataset['nOfPizzas']):
-        i_total_ingra = 1
-        i_ingra = set()
-        while i_total_ingra < (len(dataset['pizzas'][i])):
-            i_ingra.add(dataset['pizzas'][i][i_total_ingra])
-            i_total_ingra += 1
+def scanning_days_needed_sort(a, b, order = 1):
+    # default: highest first
+	if len(a.books) / a.ship < len(b.books) / b.ship:
+		return order
+	elif len(a.books) / a.ship == len(b.books) / b.ship:
+		return 0
+	else: 
+		return -order
 
-        for j in range(dataset['nOfPizzas']):
-            if i == j:
-                arr[dataset['pizzas'][i][0]][dataset['pizzas'][j][0]] = -1
-            else:
-                j_total_ingra = 1
-                j_ingra = set()
-                while j_total_ingra < (len(dataset['pizzas'][i])):
-                    j_ingra.add(dataset['pizzas'][j][j_total_ingra])
-                    j_total_ingra += 1
-                j_ingra = j_ingra.union(i_total_ingra)
-                arr[dataset['pizzas'][i][0]
-                    ][dataset['pizzas'][j][0]] = len(j_ingra)
-    print(arr)
+def highest_scanning_rate_sort(a, b):
+	if a.ship > b.ship:
+		return 1
+	elif a.ship == b.ship:
+		return 0
+	else: 
+		return -1
+
+def lowest_signup_time_sort(a, b):
+	if a.sign_days < b.sign_days:
+		return -1
+	elif a.sign_days == b.sign_days:
+		return 0
+	else: 
+		return 1
+
+def highest_library_score_sort(a, b, shelf):
+	a_score = sum(map(filter(a.books,lambda y: shelf.scan[y]),lambda x: shelf.score[x]))
+	b_score = sum(map(filter(b.books,lambda y: shelf.scan[y]),lambda x: shelf.score[x]))
+	if a_score > b_score:
+		return 1
+	elif a_score == b_score:
+		return 0
+	else: 
+		return -1

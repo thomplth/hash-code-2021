@@ -1,38 +1,73 @@
 """
 dataset_format = {
-    'pizzas':
-            [
-                [1, 'onion', 'pepper', 'olive'], 
-                [2, 'mushroom', 'tomato', 'basil']
-            ],               # Index of each pizza, followed by ingredients, ordered decendingly by number of ingredients
-    'nOfPizzas': 5,          # Number of pizzas
-    'nOfTwo': 1,             # Number of 2-person teams
-    'nOfThree': 2,           # Number of 3-person teams
-    'nOfFour': 1,            # Number of 4-person teams
-    'ingredients':
+    "nbook" : int, // number of books
+    "nlib": int, // number of librarys
+    "nday": in // number of day allowed
+    "lib": // list of dict of libraries and books data
+        [
             {
-                'onion': 1,
-                'pepper': 2,
-            }                # occurance of ingredients in all pizzas, accending order by occurance
+                "index": int    //original index of the library
+                "books": list<int>, // list of book indexs
+                "signup": int, // days required for signup process
+                "ship": int // books able to ship per day
+            }
+        ]
+    "shelf": // list of dict of <book_index> as keys and <book_score> as values
+        [
+            {
+                "score": int, // book score
+                "scan": bool // book is scanned or not, default as true
+            },
+            {
+                "score": 2,
+                "scan": false
+            }
+        ]
 }
 
-# for indx team, which pizza to chosolution_format = [0, 2, 3]          # Index of each selected pizza, followed by which pizza should choose
- 0, 2, 3{}[]0, 2, 3,[]1,4  \2D list, 
+"""
+"""
+solution format :
+[
+    {
+    index: int,
+    scanned: [...]
+    },
+    {
+    index: int,
+    scanned: [...]
+    }
+]
+[{<index> : [<scanned book 1>, <scanned book 2>]}, {<index_2> : [<scanned book 1>, <scanned book 2>,...]}]
+
 """
 
+import writer
+import scorer
+import solver
+import parser
+import time
+import glob
+#import optimize
 
-import glob, time
-import parser, solver, scorer, writer
+#solution = solver.solve(parser.parse('datasets/a_example.txt'))
+#print(solution)
 
 for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
     dataset = parser.parse(filename)
     start_time = time.time()
-    solution = solver.solveTemp(dataset)
+    solution = solver.solve(dataset)
+    # print(solution)
     print("--- %.10f seconds ---" % (time.time() - start_time))
     score = scorer.score(solution, dataset)
-    print('Score for %s: %s (%s pizzas for %s person)' % (filename[9:], score, dataset['nOfPizzas'], 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']))
-    writer.write(solution, filename[9]+'.txt')
+    #print('Score for %s: %s (%s pizzas for %s person)' % (
+    #    filename[9:], score, dataset['nOfPizzas'], 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']))
+    writer.writing(solution, filename[9]+'.txt')
 
+#Optimazation Part here
+#opt_solution = optimize.solve(dataset)
+#print(opt_solution)
+#score = opt_scorer.score(opt_solution, dataset)
 
 # dataset = parser.parse('datasets/a_example')
 # solution = solver.solve(dataset)
