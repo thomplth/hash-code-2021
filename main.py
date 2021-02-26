@@ -1,46 +1,49 @@
 """
 dataset_format = {
-    "nbook" : int, // number of books
-    "nlib": int, // number of librarys
-    "nday": in // number of day allowed
-    "lib": // list of dict of libraries and books data
-        [
-            {
-                "index": int    //original index of the library
-                "books": list<int>, // list of book indexs
-                "signup": int, // days required for signup process
-                "ship": int // books able to ship per day
-            }
-        ]
-    "shelf": // list of dict of <book_index> as keys and <book_score> as values
-        [
-            {
-                "score": int, // book score
-                "scan": bool // book is scanned or not, default as true
-            },
-            {
-                "score": 2,
-                "scan": false
-            }
-        ]
+    "nDuration": int,           // the duration of the simulation, in seconds
+    "nIntersection": int,       // the number of intersections
+    "nStreet": int,             // the number of streets
+    "nCars": int,               // the number of cars
+    "nBouns": int,              // the bonus points for each car
+    "streets": [
+        {
+            "index": int,
+            "start": int,       // start intersection
+            "end": int,         // end intersection
+            "name": str,        // street
+            "time": int,      // travelling time
+            "queue": [car, car, car, ...]// list of car on that queue
+        }, 
+    ]
+    "cars" : [
+        {
+            "index": int,
+            "start": int,       // start intersection
+            "end"  : int,       // (initialize sys.maxsize) //tbc
+            "path" : [ str, str, str, ... ] // list of street names
+            "curr" : int // index in path, indicate where the car is
+        }
+    ]
 }
 
-"""
-"""
 solution format :
+
 [
     {
-    index: int,
-    scanned: [...]
-    },
-    {
-    index: int,
-    scanned: [...]
+    index: int              // intersection index
+    schedule: [
+        (street_name1, time1),
+        (street_name2, time2),
+    ]
     }
 ]
-[{<index> : [<scanned book 1>, <scanned book 2>]}, {<index_2> : [<scanned book 1>, <scanned book 2>,...]}]
 
 """
+
+#import optimize
+
+#solution = solver.solve(parser.parse('datasets/a_example.txt'))
+# print(solution)
 
 import writer
 import scorer
@@ -48,25 +51,32 @@ import solver
 import parser
 import time
 import glob
-#import optimize
-
-#solution = solver.solve(parser.parse('datasets/a_example.txt'))
-#print(solution)
-
 for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
     dataset = parser.parse(filename)
-    start_time = time.time()
-    solution = solver.solve(dataset)
-    # print(solution)
-    print("--- %.10f seconds ---" % (time.time() - start_time))
-    score = scorer.score(solution, dataset)
-    #print('Score for %s: %s (%s pizzas for %s person)' % (
-    #    filename[9:], score, dataset['nOfPizzas'], 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']))
-    writer.writing(solution, filename[9]+'.txt')
 
-#Optimazation Part here
+
+    # print(solution)
+
+    # maybe no solution
+    # score = scorer.score(dataset)
+    # score = scorer.score(solution, dataset)
+    
+    best_solution = []
+    best_score = 0
+    for i in range(10):
+        solution = solver.solve(dataset)
+        start_time = time.time()
+        print("--- %.10f seconds ---" % (time.time() - start_time))
+        score = scorer.sim(dataset, solution)
+        if score > best_score:
+            best_solution = solution
+    # print('Score for %s: %s (%s pizzas for %s person)' % (
+    #    filename[9:], score, dataset['nOfPizzas'], 2*dataset['nOfTwo']+3*dataset['nOfThree']+4*dataset['nOfFour']))
+    writer.writing(best_solution, dataset, filename[9]+'.txt')
+
+# Optimazation Part here
 #opt_solution = optimize.solve(dataset)
-#print(opt_solution)
+# print(opt_solution)
 #score = opt_scorer.score(opt_solution, dataset)
 
 # dataset = parser.parse('datasets/a_example')
@@ -74,3 +84,12 @@ for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
 # print(solution)
 # score = scorer.score(solution, dataset)
 # print("Score =",score)
+
+#loop 100 times
+""" for i in range(100):
+    score = 0
+    for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
+        dataset = parser.parse(filename)
+        start_time = time.time()
+        solution = solver.solve(dataset)
+        score = scorer.sim(dataset, solution) """

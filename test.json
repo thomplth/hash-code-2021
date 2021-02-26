@@ -1,0 +1,19 @@
+[
+    {'index': 0, 'schedule': [('rue-de-londres',
+            0.0)
+        ]
+    },
+    {'index': 1, 'schedule': [('rue-d-amsterdam',
+            0.0), ('rue-d-athenes',
+            0.0)
+        ]
+    },
+    {'index': 2, 'schedule': [('rue-de-moscou',
+            0.0)
+        ]
+    },
+    {'index': 3, 'schedule': [('rue-de-rome',
+            0)
+        ]
+    }
+]

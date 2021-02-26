@@ -1,84 +1,130 @@
-
 """
-Things to consider:
-1. Time needed to scan all books in one library
-2. Sign up time of the library
-3. Scanning rate of the library
-4. Distinct score of the entire library
-
-5. scan in random order???
-
-Steps:
-1. Sort by lowest signup time + number of days required to scan all books
-2. For each signed up library, first check the global shelf, then pop the book already scanned
-3. scan the books in random order, update the global shelf
+Principle 1: See the number of cars in each intersection, and give higher weight to that queue.
 """
 
-def solve(data, shelf):
-    current_day = 0
-	signing_lib = {}
-    next_sign_time = 0
-	signed_lib = []
-	solution = []
 
-	lib_lowest_signup_time = data.lib.sort(lowest_signup_time_sort).sort(scanning_days_needed_sort)
+"""
+Priority of street: for each intersection,
+    let s be the number of incoming street,
+        d be the simulation duration,
+    by looking at first d/s car of every incoming street, more short distance car at first d/s car, higher proirity 
+    define short distance: random number?
 
-    while current_day != data.nday:
-        if current_day == next_sign_time:
-            signed_lib.append(signing_lib)
-            signing_lib = lib_lowest_signup_time.pop(0)
-            next_sign_time += signing_lib.signup
-        
-        for lib in signed_lib:
-            lib.books = filter(lambda x: return shelf.scan[x],lib.books)
-            if not any(lib.index == x.index for x in solution):
-                solution.append(lib)
-            
-            # Scan books by their order in the list
-            for sol in solution:
-                if sol.index == lib.index
-                    sol.extend(lib.books[0:lib.ship]))
-                    lib.books = lib.books[lib.ship:]
-                
-        current_day += 1
     
-    return solution
+"""
+import random
+import math, time
 
-def solve_sort_signup_and_sort_book_score(dataset):
-	sorted_lib=data.lib.sort(scanning_days_needed_sort)
+import writer
+import scorer
+import parser
+import time
+import glob
+
+# def shit_sort_key(t):
+#     return t[1]
 
 
-def scanning_days_needed_sort(a, b, order = 1):
-    # default: highest first
-	if len(a.books) / a.ship < len(b.books) / b.ship:
-		return order
-	elif len(a.books) / a.ship == len(b.books) / b.ship:
-		return 0
-	else: 
-		return -order
+# def ps(dataset,a_list):
+#     base_time=random.randint(1,10)
+#     short_dis=random.randint(1,5)
+#     solution=[]
+#     for v in a_list:
+#         solution.append({"index": v['index'], "schedule": []})
+#     for i in a_list:
+#         num_of_short=[]
+#         for j in range(len(i['in_streets'])):
+#             num_of_short.append((i['in_streets'][j],0))
+#             for k in range(min(len(dataset['streets'][j]['queue']),int(dataset['nDuration']/len(i['in_streets'])))):
+#                 curr_car_idx=dataset['streets'][j]['queue'][k]
+#                 path_len=len(dataset['cars'][curr_car_idx]['path'])
+#                 if path_len<=short_dis:
+#                     num_of_short[j][1]+=1
+#         num_of_short.sort(key=shit_sort_key,reverse=True)
+#         for j in range(len(i['in_streets'])):
+#             solution[i["index"]]["schedule"].append((num_of_short[j][0], j+1))
+#     return solution
 
-def highest_scanning_rate_sort(a, b):
-	if a.ship > b.ship:
-		return 1
-	elif a.ship == b.ship:
-		return 0
-	else: 
-		return -1
 
-def lowest_signup_time_sort(a, b):
-	if a.sign_days < b.sign_days:
-		return -1
-	elif a.sign_days == b.sign_days:
-		return 0
-	else: 
-		return 1
 
-def highest_library_score_sort(a, b, shelf):
-	a_score = sum(map(filter(a.books,lambda y: shelf.scan[y]),lambda x: shelf.score[x]))
-	b_score = sum(map(filter(b.books,lambda y: shelf.scan[y]),lambda x: shelf.score[x]))
-	if a_score > b_score:
-		return 1
-	elif a_score == b_score:
-		return 0
-	else: 
-		return -1
+# def shitty_greedy(dataset,a_list):
+#     base_time=random.randint(1,10)
+#     short_dis=random.randint(1,5)
+#     solution=[]
+#     for v in a_list:
+#         solution.append({"index": v['index'], "schedule": []})
+#     for i in a_list:
+#         car_len=[]
+#         for j in range(len(i['in_streets'])):
+#             car_len.append((j,len(dataset['streets'][j]['queue'])))
+#         car_len.sort(key=shit_sort_key,reverse=True)
+#         for j in range(len(i['in_streets'])):
+#             solution[i["index"]]["schedule"].append((i['in_streets'][car_len[j][0]], int(car_len[j][1])))
+#     return solution
+
+
+def shitty_dynamic(dataset):
+    sol = []
+    score, queues = {}, {}
+    streets = dataset['streets'].copy()
+    cars = dataset['cars'].copy()
+
+    for d in streets:
+        if d['name'] not in score:
+            score[d['name']] = len(d['queue'])
+        if d['name'] not in queues:
+            queues[d['name']] = d['queue']
+
+    for i in range(dataset['nDuration']):
+        for d in streets:
+            if not queues[d['name']]:
+                continue
+            car_idx = queues[d['name']].pop(0)
+            if not cars[car_idx]['path']:
+                continue
+            strt_name = cars[car_idx]['path'].pop(0)
+            queues[strt_name].append(car_idx)
+            score[d['name']] += len(d['queue'])
+
+    for i in range(dataset["nIntersection"]):
+        item = { 'index': i, 'schedule': [] }
+        strt = {}
+        for d in dataset['streets']:
+            if d['end'] == i:
+                strt[d['name']] = score[d['name']]
+        base = int(dataset['nDuration'] / 10)
+        for key in strt.keys():
+            if sum(strt.values()) == 0:
+                time = 0
+            else:
+                time = int(base * (strt[key]/sum(strt.values())))
+            tup = (key, time)
+            item['schedule'].append(tup)
+        sol.append(item)
+
+    # print(sol)
+    return sol
+
+def write(solution, dataset, filename):
+    filename = 'output2/' + filename
+    with open(filename, 'w') as fo:
+        fo.write(str(len(solution))+'\n')
+        for intersection in solution:
+            fo.write(str(intersection["index"]) + '\n')
+            fo.write(str(len(intersection["schedule"])) + '\n')
+            for job in intersection["schedule"]:
+                street_name = job[0]
+                fo.write(str(street_name) + ' ' + str(job[1]))
+                fo.write('\n')
+
+# dataset = parser.parse('datasets/a.txt')
+# solution = shitty_dynamic(dataset)
+# write(solution, dataset, 'a.txt')
+
+for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
+    dataset = parser.parse(filename)
+    start_time = time.time()
+    solution = shitty_dynamic(dataset)
+    print("--- %.10f seconds ---" % (time.time() - start_time))
+    # score = scorer.sim(dataset, solution)
+    write(solution, dataset, filename[9]+'.txt')

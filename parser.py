@@ -1,43 +1,80 @@
+"""
+dataset_format = {
+    "nDuration": int,           // the duration of the simulation, in seconds
+    "nIntersection": int,       // the number of intersections
+    "nStreet": int,             // the number of streets
+    "nCars": int,               // the number of cars
+    "nBouns": int,              // the bonus points for each car
+    "streets": [
+        {
+            "index": int,
+            "start": int,       // start intersection
+            "end": int,         // end intersection
+            "name": str,        // street
+            "time": int         // travelling time
+            "queue": [car, car, car, ...]// list of car on that queue
+        }, 
+    ]
+    "cars" : [
+        {
+            "index": int,
+            "start": int,       // start intersection
+            "end"  : int,       // (initialize sys.maxsize) //tbc
+            "path" : [ str, str, str, ... ] // list of street names
+        }
+    ]
+"""
+
+
 def parse(filename):
     with open(filename, 'r') as fi:
-        nbook, nlib, nday = map(int, fi.readline().split())
-        scores = list(map(int, fi.readline().split()))
+        nDuration, nIntersection, nStreet, nCars, nBonus = map(
+            int, fi.readline().split())
+        streets, cars = [], []
 
-        shelf = []
-        for s in scores:
+        for i in range(nStreet):
+            line = list(map(str, fi.readline().split()))
             item = {
-                'score': s,
-                'scan': False
+                "index": i,
+                "start": int(line[0]),
+                "end": int(line[1]),
+                "name": line[2],
+                "time": int(line[3]),
+                "queue": []
             }
-            shelf.append(item)
+            streets.append(item)
 
-        lib = []
-        count = 0
-        for line in fi:
-            lnbook, lnsign, lnship = map(int, line.split())
+        for i in range(nCars):
+            line = list(map(str, fi.readline().split()))
             item = {
-                'index': count,
-                'books': [],
-                'signup': lnsign,
-                'ship': lnship
+                "index": i,
+                "start": int(line[0]),
+                "end"  : nDuration + 1,
+                "path": line[1:]
             }
+            for j in range(len(streets)):
+                if streets[j]['name'] == line[1]:
+                    streets[j]['queue'].append(i)
+                    break
+            cars.append(item)
 
-            count += 1
-            nextline = next(fi)
-            item['books'] = list(map(int, nextline.split()))
-            
-            lib.append(item)
-            
         dataset = {
-            "nbook": nbook,
-            "nlib": nlib,
-            "nday": nday,
-            "lib": lib,
-            "shelf": shelf
+            "nDuration": nDuration,
+            "nIntersection": nIntersection,
+            "nStreet": nStreet,
+            "nCars": nCars,
+            "nBouns": nBonus,
+            "streets": streets,
+            "cars": cars
         }
 
         return dataset
 
-print(parse('datasets/a_example.txt'))
-# print(parse('datasets/b_read_on.txt'))
-# print(parse('datasets/e_many_teams.in'))
+
+# print(parse('datasets/a.txt'))
+# print(parse('datasets/b.txt'))
+# print(parse('datasets/c.txt'))
+# print(parse('datasets/d.txt'))
+# print(parse('datasets/e.txt'))
+# print(parse('datasets/f.txt'))
+
