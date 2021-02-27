@@ -114,8 +114,8 @@ def write(solution, dataset, filename):
             fo.write(str(len(intersection["schedule"])) + '\n')
             for job in intersection["schedule"]:
                 street_name = job[0]
-                fo.write(str(street_name) + ' ' + str(job[1]))
-                fo.write('\n')
+                if job[1]:
+                    fo.write(str(street_name) + ' ' + str(job[1]) + '\n')
 
 # dataset = parser.parse('datasets/a.txt')
 # solution = shitty_dynamic(dataset)
