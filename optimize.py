@@ -87,23 +87,24 @@ def shitty_dynamic(dataset):
             score[d['name']] += len(d['queue'])
 
     for i in range(dataset["nIntersection"]):
-        item = { 'index': i, 'schedule': [] }
+        item = {'index': i, 'schedule': []}
         strt = {}
         for d in dataset['streets']:
             if d['end'] == i:
                 strt[d['name']] = score[d['name']]
-        base = int(dataset['nDuration'] / 10)
-        for key in strt.keys():
-            if sum(strt.values()) == 0:
-                time = 0
-            else:
+        if sum(strt.values()) != 0:
+            base = int(dataset['nDuration'] / 100)
+            base = int(dataset['nDuration'] / 10) if base == 0 else base
+            base = 1 if base == 0 else base
+            for key in strt.keys():
                 time = int(base * (strt[key]/sum(strt.values())))
-            tup = (key, time)
-            item['schedule'].append(tup)
-        sol.append(item)
-
-    # print(sol)
+                if time == 0:
+                    continue
+                tup = (key, time)
+                item['schedule'].append(tup)
+            sol.append(item)
     return sol
+
 
 def write(solution, dataset, filename):
     filename = 'output2/' + filename
@@ -114,12 +115,8 @@ def write(solution, dataset, filename):
             fo.write(str(len(intersection["schedule"])) + '\n')
             for job in intersection["schedule"]:
                 street_name = job[0]
-                if job[1]:
-                    fo.write(str(street_name) + ' ' + str(job[1]) + '\n')
+                fo.write(str(street_name) + ' ' + str(job[1]) + '\n')
 
-# dataset = parser.parse('datasets/a.txt')
-# solution = shitty_dynamic(dataset)
-# write(solution, dataset, 'a.txt')
 
 for idx, filename in enumerate(sorted(glob.glob('datasets/*'))):
     dataset = parser.parse(filename)
